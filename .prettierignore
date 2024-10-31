@@ -1,0 +1,35 @@
+# build
+dist
+.astro
+.svelte-kit
+.vercel
+
+# pnpm
+node_modules
+pnpm-lock.yaml
+pnpm-workspace.yaml
+.pnpm-store
+
+# temp and cache
+.turbo
+.cache
+.temp
+
+# vscode idea
+.DS_Store
+.idea
+.vscode
+
+# Git
+.git
+.gitignore
+
+# package
+package-lock.json
+yarn.lock
+bun.lockb
+
+# others
+public
+coverage
+*.log
