@@ -1,0 +1,12 @@
+:root {
+  --background: #eee;
+  --foreground: #00000087;
+  --primary-background: #ee4f87fb;
+  --primary-foreground: #fff;
+}
+.dark {
+  --background: #494949;
+  --foreground: #ffffff87;
+  --primary-background: #ff85b0d2;
+  --primary-foreground: #ffffffd2;
+}
