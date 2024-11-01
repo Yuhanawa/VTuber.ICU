@@ -30,9 +30,7 @@ const { ...props } = Astro.props;
     <pl label="毕业">
       {
         props.Retirement && (
-          <a href={props.Retirement?.URL}>
-            {props.Retirement?.Date?.toDateString()}
-          </a>
+          <a href={props.Retirement?.URL}>{props.Retirement?.Date?.toDateString()}</a>
         )
       }
     </pl>

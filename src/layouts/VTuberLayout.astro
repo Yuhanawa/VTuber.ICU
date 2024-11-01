@@ -9,8 +9,7 @@ import VTuberProfile from "../components/VTuberProfile.astro";
 
 type Props = CollectionEntry<"v">["data"];
 
-const { title, description, pubDate, updatedDate, heroImage, profile } =
-  Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, profile } = Astro.props;
 ---
 
 <BaseLayout {...Astro.props}>
