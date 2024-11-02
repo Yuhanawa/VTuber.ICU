@@ -6,12 +6,22 @@ import Footer from "../components/Footer.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import BaseLayout from "./BaseLayout.astro";
 import VTuberProfile from "../components/VTuberProfile.astro";
+import PostLayout from "./PostLayout.astro";
 
 type Props = CollectionEntry<"v">["data"];
 
 const { title, description, pubDate, updatedDate, heroImage, profile } = Astro.props;
 ---
 
-<BaseLayout {...Astro.props}>
-  {profile && <VTuberProfile {...profile} />}
-</BaseLayout>
+<PostLayout {...Astro.props}>
+  {profile && (<VTuberProfile {...profile} /><hr />)}
+
+  <slot />
+</PostLayout>
+<style>
+  hr {
+    margin: 1em 0;
+    border: 1px solid rgb(var(--gray));
+    background-color: rgb(var(--gray));
+  }
+</style>

@@ -1,65 +1,81 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import pl from "./VTuberProfileLine.astro";
+import ProLi from "./VTuberProfileLine.astro";
 
 type Props = CollectionEntry<"v">["data"]["profile"];
 const { ...props } = Astro.props;
 ---
 
-<div>
-  <img src={props.HeaderImage?.toString()} alt="" />
-  <div>
-    <pl label="名字"> {props.OriginalName} </pl>
-    <pl label="外号"> {props.Nickname?.join(", ")} </pl>
-    <pl label="物种"> {props.Species} </pl>
-    <pl label="生日"> {props.Birthday?.toDateString()} </pl>
-    <pl label="年龄"> {props.Age?.toString()} </pl>
-    <pl label="外貌年">{props.AppearanceAge?.toString()} </pl>
-    <pl label="性别"> {props.Gender} </pl>
-    <pl label="身高"> {props.Height} </pl>
-    <pl label="体重"> {props.Weight} </pl>
-    <pl label="血型"> {props.BloodType} </pl>
-    <pl label="MIT">{props.MITB} </pl>
-    <pl label="家乡"> {props.Hometown} </pl>
-    <pl label="公司"> {props.Company} </pl>
-    <pl label="爱好"> {props.Hobbies} </pl>
-    <pl label="标签"> {props.Tags?.join(", ")} </pl>
-    <pl label="出道">
+<div class="profile">
+  <img src={props.HeaderImage?.toString()} alt="" class="header-image" />
+
+  <div class="info">
+    <ProLi item="名字"> {props.OriginalName} </ProLi>
+    <ProLi item="外号"> {props.Nickname?.join(", ")} </ProLi>
+    <ProLi item="物种"> {props.Species} </ProLi>
+    <ProLi item="生日"> {props.Birthday?.toDateString()} </ProLi>
+    <ProLi item="年龄"> {props.Age?.toString()} </ProLi>
+    <ProLi item="外貌年龄">{props.AppearanceAge?.toString()} </ProLi>
+    <ProLi item="性别"> {props.Gender} </ProLi>
+    <ProLi item="身高"> {props.Height} </ProLi>
+    <ProLi item="体重"> {props.Weight} </ProLi>
+    <ProLi item="血型"> {props.BloodType} </ProLi>
+    <ProLi item="MIT">{props.MITB} </ProLi>
+    <ProLi item="家乡"> {props.Hometown} </ProLi>
+    <ProLi item="公司"> {props.Company} </ProLi>
+    <ProLi item="爱好"> {props.Hobbies} </ProLi>
+    <ProLi item="标签"> {props.Tags?.join(", ")} </ProLi>
+    <ProLi item="出道">
       {props.DebutDate?.map((d) => `${d.Platform}: ${d.Date}`)}
-    </pl>
-    <pl label="毕业">
+    </ProLi>
+    <ProLi item="毕业">
       {
         props.Retirement && (
           <a href={props.Retirement?.URL}>{props.Retirement?.Date?.toDateString()}</a>
         )
       }
-    </pl>
-    <pl label="媒体">
+    </ProLi>
+    <ProLi item="媒体">
       {props.Medias?.map((m) => <a href={m.URL}>{m.Platform}</a>)}
-    </pl>
-    <pl label="外链">
+    </ProLi>
+    <ProLi item="外链">
       {props.ExternalLinks?.map((e) => <a href={e.URL}>{e.Remark}</a>)}
-    </pl>
-    <pl label="描述"> {props.Description}</pl>
-    <pl label="高光时刻">
+    </ProLi>
+    <ProLi item="描述"> {props.Description}</ProLi>
+    <ProLi item="高光时刻">
       {props.Highlights?.map((h) => <a href={h.URL}>{h.Remark}</a>)}
-    </pl>
-    {props.More?.map((m) => <pl label={m.label}>{m.value}</pl>)}
+    </ProLi>
+    {props.More?.map((m) => <ProLi item={m.item}>{m.value}</ProLi>)}
   </div>
 </div>
 
 <style>
-  div {
+  .profile {
     display: flex;
     gap: 1rem;
+    flex-direction: row-reverse;
+  }
+  @media screen and (max-width: 480px) {
+    .profile {
+      flex-direction: column;
+    }
+    img {
+    width: 80%;
+    height: 80%;
+  }
+  }
+  .info {
+    display: flex;
     flex-direction: column;
   }
   img {
+    min-width: 200px;
     width: 100%;
+    height: 100%;
     border-radius: 12px;
   }
-  pl {
-    margin-bottom: 0.5rem;
+  ProLi {
+    width: 100%;
   }
   a {
     text-decoration: none;

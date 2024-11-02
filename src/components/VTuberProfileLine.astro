@@ -1,24 +1,28 @@
 ---
 interface Props {
-  label: string;
+  item: string;
 }
-const { label } = Astro.props;
+const { item } = Astro.props;
 ---
 
 {
   Astro.slots.has("default") !== undefined && (
     <li>
-      <span>{label}</span> <slot />
+      <span>{item}</span> <slot />
     </li>
   )
-};
+}
 
 <style>
   li {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    text-wrap: wrap;
+    word-break: break-all;
+    width: 100%;
   }
   span {
     font-weight: bold;
+    min-width: 5em;
   }
 </style>
