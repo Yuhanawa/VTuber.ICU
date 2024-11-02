@@ -5,7 +5,6 @@ export type TocItem = {
   children: TocItem[];
 };
 
-
 export function renderTocItem(item: TocItem, parentIndex: number): string {
   // 使用 encodeURIComponent 确保特殊字符在 URL 中正确编码
   const safeSlug = encodeURIComponent(item.slug);

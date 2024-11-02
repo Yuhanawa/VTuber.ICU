@@ -20,9 +20,9 @@ const { Content, headings } = await post.render();
 <VTuberLayout {...post.data}>
   {
     headings.length > 0 && (
-        <div class="toc-container">
-          <TableOfContents headings={headings}  />
-        </div>
+      <div class="toc-container">
+        <TableOfContents headings={headings} />
+      </div>
     )
   }
   <Content />
