@@ -14,7 +14,14 @@ const { title, description, pubDate, updatedDate, heroImage, profile } = Astro.p
 ---
 
 <PostLayout {...Astro.props}>
-  {profile && (<VTuberProfile {...profile} /><hr />)}
+  {
+    profile && (
+      <>
+        <VTuberProfile {...profile} />
+        <hr />
+      </>
+    )
+  }
 
   <slot />
 </PostLayout>
