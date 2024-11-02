@@ -1,0 +1,432 @@
+---
+import { type TocItem, renderTocItem } from "./TcoItem";
+
+export interface Props {
+  headings: Array<{
+    depth: number;
+    text: string;
+    slug: string;
+  }>;
+}
+
+const { headings } = Astro.props;
+
+function buildToc(headings: Props["headings"]): TocItem[] {
+  const toc: TocItem[] = [];
+  const stack: TocItem[] = [];
+
+  headings.forEach((heading) => {
+    const item: TocItem = {
+      ...heading,
+      children: [],
+    };
+
+    if (stack.length === 0) {
+      toc.push(item);
+      stack.push(item);
+      return;
+    }
+
+    while (stack.length > 0 && stack[stack.length - 1].depth >= heading.depth) {
+      stack.pop();
+    }
+
+    if (stack.length === 0) {
+      toc.push(item);
+    } else {
+      const parent = stack[stack.length - 1];
+      parent.children.push(item);
+    }
+
+    stack.push(item);
+  });
+
+  return toc;
+}
+
+const tocItems = buildToc(headings);
+---
+
+<nav class="toc" aria-label="目录导航">
+  <div class="toc-header">
+    <span class="toc-title">目录</span>
+    <div class="search-container">
+      <input type="search" id="toc-search" placeholder="搜索..." aria-label="搜索目录" />
+      <div class="search-results hidden" role="listbox" aria-label="搜索结果"></div>
+    </div>
+  </div>
+
+  <ul class="toc-list">
+    {tocItems.map((item, index) => <Fragment set:html={renderTocItem(item, index)} />)}
+  </ul>
+</nav>
+
+<style>
+  .toc {
+    position: sticky;
+    top: 2rem;
+    width: 260px;
+    padding: 1rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+  }
+
+  /* 添加细滚动条样式 */
+  .toc::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .toc::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  .toc::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 2px;
+  }
+
+  .toc-header {
+    margin-bottom: 1rem;
+  }
+
+  .toc-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .search-container {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  #toc-search {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 0.875rem;
+  }
+
+  #toc-search:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  }
+
+  .search-results {
+    position: absolute;
+    width: 100%;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    margin-top: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+  }
+
+  .search-result-item {
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+
+  .search-result-item:hover {
+    background-color: #f3f4f6;
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .toggle-btn {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .toggle-btn:hover {
+    color: #374151;
+  }
+
+  .toc-link {
+    display: block;
+    padding: 0.25rem 0;
+    color: #4b5563;
+    text-decoration: none;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition: color 0.2s;
+  }
+
+  .toc-link:hover {
+    color: #3b82f6;
+  }
+
+  .toc-link.active {
+    color: #3b82f6;
+    font-weight: 500;
+  }
+
+  .nested {
+    padding-left: 1rem;
+    margin-left: 0.5rem;
+    border-left: 1px solid #e5e7eb;
+    list-style: none;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .collapsed {
+    display: none;
+  }
+
+  @media (max-width: 1024px) {
+    .toc {
+      display: none;
+    }
+  }
+
+  /* 优化移动端样式 */
+  @media (max-width: 1024px) {
+    .toc {
+      position: fixed;
+      top: auto;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      max-height: 50vh;
+      border-radius: 8px 8px 0 0;
+      z-index: 100;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .toc.show {
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+  let debounceTimer: NodeJS.Timeout | undefined;
+  const DEBOUNCE_DELAY = 100;
+
+  // 工具函数：防抖
+  function debounce(fn: Function, delay: number) {
+    return (...args: any[]) => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => fn(...args), delay);
+    };
+  }
+
+  // 初始化
+  function init() {
+    setupScrollHandling();
+    setupToggleButtons();
+    setupSearch();
+    setupMobileSupport();
+  }
+
+  // 滚动处理
+  function setupScrollHandling() {
+    const tocLinks = document.querySelectorAll<HTMLAnchorElement>(".toc-link");
+
+    tocLinks.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const href = link.getAttribute("href");
+        if (!href) return;
+
+        const target = document.querySelector(href);
+        if (!target) return;
+
+        // 使用 requestAnimationFrame 优化滚动性能
+        requestAnimationFrame(() => {
+          const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - 100;
+          window.scrollTo({
+            top: targetPosition,
+            behavior: "smooth",
+          });
+        });
+
+        history.pushState(null, "", href);
+      });
+    });
+
+    const headingObserver = new IntersectionObserver(
+      debounce((entries: IntersectionObserverEntry[]) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+
+          const id = entry.target.getAttribute("id");
+          if (!id) return;
+
+          updateActiveLink(id);
+        });
+      }, DEBOUNCE_DELAY),
+      {
+        rootMargin: "-100px 0px -66%",
+        threshold: 1.0,
+      },
+    );
+
+    document
+      .querySelectorAll("h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]")
+      .forEach((heading) => headingObserver.observe(heading));
+  }
+
+  function updateActiveLink(id: string) {
+    document.querySelectorAll(".toc-link").forEach((link) => {
+      link.classList.remove("active");
+    });
+
+    const activeLink = document.querySelector(`.toc-link[href="#${id}"]`);
+    if (!activeLink) return;
+
+    activeLink.classList.add("active");
+    expandParentSections(activeLink as HTMLElement);
+  }
+
+  function expandParentSections(element: HTMLElement) {
+    let parent = element.closest(".nested");
+    while (parent) {
+      parent.classList.remove("collapsed");
+      const parentIndex = parent.getAttribute("data-index");
+      if (parentIndex) {
+        const toggleBtn = document.querySelector(`.toggle-btn[data-index="${parentIndex}"]`);
+        if (toggleBtn) {
+          toggleBtn.querySelector(".icon-expand")?.classList.add("hidden");
+          toggleBtn.querySelector(".icon-collapse")?.classList.remove("hidden");
+        }
+      }
+      parent = parent.parentElement?.closest(".nested") || null;
+    }
+  }
+
+  function setupToggleButtons() {
+    document.querySelectorAll(".toggle-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const index = btn.getAttribute("data-index");
+        if (!index) return;
+
+        const nestedList = document.querySelector(`.nested[data-index="${index}"]`);
+        if (!nestedList) return;
+
+        nestedList.classList.toggle("collapsed");
+
+        const expandIcon = btn.querySelector(".icon-expand");
+        const collapseIcon = btn.querySelector(".icon-collapse");
+
+        if (expandIcon && collapseIcon) {
+          expandIcon.classList.toggle("hidden");
+          collapseIcon.classList.toggle("hidden");
+        }
+      });
+    });
+  }
+
+  function setupSearch() {
+    const searchInput = document.getElementById("toc-search") as HTMLInputElement;
+    const searchResults = document.querySelector(".search-results");
+    const tocLinks = document.querySelectorAll<HTMLAnchorElement>(".toc-link");
+
+    if (!searchInput || !searchResults) return;
+
+    const handleSearch = debounce(() => {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      searchResults.innerHTML = "";
+
+      if (searchTerm.length < 2) {
+        searchResults.classList.add("hidden");
+        return;
+      }
+
+      const matches = Array.from(tocLinks)
+        .filter((link) => {
+          const text = link.getAttribute("data-text");
+          return text && text.includes(searchTerm);
+        })
+        .slice(0, 5);
+
+      if (matches.length > 0) {
+        const fragment = document.createDocumentFragment();
+        matches.forEach((link) => {
+          const div = document.createElement("div");
+          div.className = "search-result-item";
+          div.textContent = link.textContent;
+          div.addEventListener("click", () => {
+            link.click();
+            searchInput.value = "";
+            searchResults.classList.add("hidden");
+          });
+          fragment.appendChild(div);
+        });
+        searchResults.appendChild(fragment);
+        searchResults.classList.remove("hidden");
+      } else {
+        searchResults.classList.add("hidden");
+      }
+    }, DEBOUNCE_DELAY);
+
+    searchInput.addEventListener("input", handleSearch);
+
+    document.addEventListener("click", (e) => {
+      if (!searchInput.contains(e.target as Node) && !searchResults.contains(e.target as Node)) {
+        searchResults.classList.add("hidden");
+      }
+    });
+  }
+
+  function setupMobileSupport() {
+    if (window.innerWidth <= 1024) {
+      const toc = document.querySelector(".toc");
+      if (!toc) return;
+
+      // 添加移动端手势支持
+      let touchStartY = 0;
+      let touchEndY = 0;
+
+      // toc.addEventListener("touchstart", (e) => {
+      //   touchStartY = e.touches[0].clientY;
+      // });
+
+      // toc.addEventListener("touchmove", (e) => {
+      //   touchEndY = e.touches[0].clientY;
+      //   const diff = touchEndY - touchStartY;
+
+      //   // 上滑显示，下滑隐藏
+      //   if (Math.abs(diff) > 50) {
+      //     toc.classList.toggle("show", diff < 0);
+      //   }
+      // });
+    }
+  }
+
+  // 初始化
+  document.addEventListener("DOMContentLoaded", init);
+</script>
