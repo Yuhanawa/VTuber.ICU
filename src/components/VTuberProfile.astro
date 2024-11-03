@@ -7,7 +7,7 @@ const { ...props } = Astro.props;
 ---
 
 <div class="profile">
-  <img src={props.HeaderImage?.toString()} alt="" class="header-image" />
+  <img src={props.Avatar?.toString()} alt="" class="avatar-image" />
 
   <div class="info">
     <ProLi item="名字"> {props.OriginalName} </ProLi>
@@ -41,7 +41,6 @@ const { ...props } = Astro.props;
     <ProLi item="外链">
       {props.ExternalLinks?.map((e) => <a href={e.URL}>{e.Remark}</a>)}
     </ProLi>
-    <ProLi item="描述"> {props.Description}</ProLi>
     <ProLi item="高光时刻">
       {props.Highlights?.map((h) => <a href={h.URL}>{h.Remark}</a>)}
     </ProLi>
