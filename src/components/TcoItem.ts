@@ -20,27 +20,27 @@ interface SafeContentOptions {
 
 class TocRenderer {
   private static readonly ENTITIES: Readonly<Record<string, string>> = {
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    '&': '&amp;',
-    "'": '&#39;',
-    '/': '&#x2F;',
-    '`': '&#x60;',
-    '=': '&#x3D;'
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "&": "&amp;",
+    "'": "&#39;",
+    "/": "&#x2F;",
+    "`": "&#x60;",
+    "=": "&#x3D;",
   };
 
   private static makeSafeContent(content: string, options: SafeContentOptions = {}): string {
-    let result = content.replace(/[&<>"'`=\/]/g, char => this.ENTITIES[char] || char);
-    
+    let result = content.replace(/[&<>"'`=\/]/g, (char) => this.ENTITIES[char] || char);
+
     if (options.stripHTML) {
-      result = result.replace(/<[^>]*>/g, '');
+      result = result.replace(/<[^>]*>/g, "");
     }
-    
+
     if (options.lowercase) {
       result = result.toLowerCase();
     }
-    
+
     return result;
   }
 
@@ -52,16 +52,17 @@ class TocRenderer {
     const safeSlug = encodeURIComponent(item.slug);
     const safeText = this.makeSafeContent(item.text);
     const dataText = this.makeSafeContent(item.text, { lowercase: true });
-    const buttonId = this.generateId('toc-btn', parentIndex);
-    const sectionId = this.generateId('toc-section', parentIndex);
-    
+    const buttonId = this.generateId("toc-btn", parentIndex);
+    const sectionId = this.generateId("toc-section", parentIndex);
+
     const hasChildren = item.children.length > 0;
-    
+
     return `
       <li class="toc-item-container">
         <div class="toc-item" role="presentation">
-          ${hasChildren && false
-            ? `<button
+          ${
+            hasChildren && false
+              ? `<button
                 id="${buttonId}"
                 class="toggle-btn"
                 aria-expanded="false"
@@ -71,7 +72,7 @@ class TocRenderer {
                 <span class="icon-collapse">−</span>
                 <span class="sr-only">Toggle section</span>
               </button>`
-            : `<span class="toggle-placeholder"></span>`
+              : `<span class="toggle-placeholder"></span>`
           }
           <a
             href="#${safeSlug}"
@@ -83,18 +84,19 @@ class TocRenderer {
             ${safeText}
           </a>
         </div>
-        ${hasChildren
-          ? `<ul 
+        ${
+          hasChildren
+            ? `<ul 
               id="${sectionId}"
               class="nested"
               role="group" 
               aria-labelledby="${buttonId}"
             >
-              ${item.children.map((child, index) => 
-                this.renderTocItem(child, parentIndex + index + 1)
-              ).join('')}
+              ${item.children
+                .map((child, index) => this.renderTocItem(child, parentIndex + index + 1))
+                .join("")}
             </ul>`
-          : ''
+            : ""
         }
       </li>
     `.trim();
@@ -104,7 +106,7 @@ class TocRenderer {
     return `
       <nav aria-label="Table of contents" class="toc-navigation">
         <ul role="tree">
-          ${items.map((item, index) => this.renderTocItem(item, index)).join('')}
+          ${items.map((item, index) => this.renderTocItem(item, index)).join("")}
         </ul>
       </nav>
     `.trim();
