@@ -17,6 +17,7 @@
     "@astrojs/svelte": "^5.7.2",
     "@astrojs/vercel": "^7.8.2",
     "astro": "^4.16.8",
+    "sharp": "^0.33.5",
     "svelte": "^5.1.6",
     "typescript": "^5.6.3"
   },
