@@ -25,7 +25,7 @@ profile:
 关注[${uname}](https://space.bilibili.com/${mid})谢谢喵~ 关注[${uname}](https://space.bilibili.com/${mid})谢谢喵~
 
 ## 此条目有待补充
-你可以在[这里](https://github.com/Yuhanawa/VTuber.ICU/edit/master/src/content/v/${uname}/index.md)编辑本文
+你可以在[这里](https://github.com/Yuhanawa/VTuber.ICU-Content/edit/master/v/${uname}/index.md)编辑本文
 `;
     fs.mkdirSync(`src/content/v/${uname}`);
     fs.writeFileSync(`src/content/v/${uname}/index.md`, content);
