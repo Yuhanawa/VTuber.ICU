@@ -32,8 +32,7 @@ if (bInfo?.mid) {
 }
 if (bInfo?.roomid) {
   const liveRoom = `https://live.bilibili.com/${bInfo.roomid}`;
-  if (profile.LiveRooms)
-    profile.LiveRooms.includes(liveRoom) || profile.LiveRooms.push(liveRoom);
+  if (profile.LiveRooms) profile.LiveRooms.includes(liveRoom) || profile.LiveRooms.push(liveRoom);
   else profile.LiveRooms = [liveRoom];
 }
 ---
