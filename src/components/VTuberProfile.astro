@@ -1,50 +1,104 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import ProLi from "./VTuberProfileLine.astro";
+import { getInfoByMid } from "../lib/InfoUtils";
 
-type Props = CollectionEntry<"v">["data"]["profile"];
-const { ...props } = Astro.props;
+function getPlatform(url: string) {
+  if (url.includes("youtube.com")) {
+    return "Youtube";
+  } else if (url.includes("twitch.tv")) {
+    return "Twitch";
+  } else if (url.includes("twitter.com")) {
+    return "Twitter";
+  } else if (url.includes("x.com")) {
+    return "X";
+  } else if (url.includes("bilibili.com")) {
+    return "Bilibili";
+  } else {
+    return "Unknown";
+  }
+}
+
+type type = {
+  bInfo: BInfo | undefined;
+  profile: NonNullable<CollectionEntry<"v">["data"]["profile"]>;
+};
+const { bInfo, profile } = Astro.props as type;
+
+if (bInfo?.mid) {
+  const Media = `https://space.bilibili.com/${bInfo.mid}`;
+  if (profile.Medias) profile.Medias.includes(Media) || profile.Medias.push(Media);
+  else profile.Medias = [Media];
+}
+if (bInfo?.roomid) {
+  const liveRoom = `https://live.bilibili.com/${bInfo.roomid}`;
+  if (profile.LiveRooms)
+    profile.LiveRooms.includes(liveRoom) || profile.LiveRooms.push(liveRoom);
+  else profile.LiveRooms = [liveRoom];
+}
 ---
 
 <div class="profile">
-  <img src={props.Avatar?.toString()} alt="" class="avatar-image" />
+  <img src={profile.Avatar?.toString()} alt="" class="avatar-image" />
 
   <div class="info">
-    <ProLi item="名字"> {props.OriginalName} </ProLi>
-    <ProLi item="外号"> {props.Nickname?.join(", ")} </ProLi>
-    <ProLi item="物种"> {props.Species} </ProLi>
-    <ProLi item="生日"> {props.Birthday?.toDateString()} </ProLi>
-    <ProLi item="年龄"> {props.Age?.toString()} </ProLi>
-    <ProLi item="外貌年龄">{props.AppearanceAge?.toString()} </ProLi>
-    <ProLi item="性别"> {props.Gender} </ProLi>
-    <ProLi item="身高"> {props.Height} </ProLi>
-    <ProLi item="体重"> {props.Weight} </ProLi>
-    <ProLi item="血型"> {props.BloodType} </ProLi>
-    <ProLi item="MIT">{props.MITB} </ProLi>
-    <ProLi item="家乡"> {props.Hometown} </ProLi>
-    <ProLi item="公司"> {props.Company} </ProLi>
-    <ProLi item="爱好"> {props.Hobbies} </ProLi>
-    <ProLi item="标签"> {props.Tags?.join(", ")} </ProLi>
+    <ProLi item="名字"> {profile.OriginalName ?? bInfo?.uname} </ProLi>
+    <ProLi item="外号"> {profile.Nickname?.join(", ")} </ProLi>
+    <ProLi item="物种"> {profile.Species} </ProLi>
+    <ProLi item="生日"> {profile.Birthday?.toDateString()} </ProLi>
+    <ProLi item="年龄"> {profile.Age?.toString()} </ProLi>
+    <ProLi item="外貌年龄">{profile.AppearanceAge?.toString()} </ProLi>
+    <ProLi item="性别"> {profile.Gender} </ProLi>
+    <ProLi item="身高"> {profile.Height} </ProLi>
+    <ProLi item="体重"> {profile.Weight} </ProLi>
+    <ProLi item="血型"> {profile.BloodType} </ProLi>
+    <ProLi item="MIT">{profile.MITB} </ProLi>
+    <ProLi item="家乡"> {profile.Hometown} </ProLi>
+    <ProLi item="公司"> {profile.Company} </ProLi>
+    <ProLi item="爱好"> {profile.Hobbies} </ProLi>
+    <ProLi item="标签"> {profile.Tags?.join(", ")} </ProLi>
     <ProLi item="出道">
-      {props.DebutDate?.map((d) => `${d.Platform}: ${d.Date}`)}
+      {profile.DebutDate?.map((d) => `${d.Platform}: ${d.Date}`)}
     </ProLi>
     <ProLi item="毕业">
       {
-        props.Retirement && (
-          <a href={props.Retirement?.URL}>{props.Retirement?.Date?.toDateString()}</a>
+        profile.Retirement && (
+          <a href={profile.Retirement?.URL}>{profile.Retirement?.Date?.toDateString()}</a>
         )
       }
     </ProLi>
     <ProLi item="媒体">
-      {props.Medias?.map((m) => <a href={m.URL}>{m.Platform}</a>)}
+      {profile.Medias.map((m) => <a href={m}>{getPlatform(m)}</a>)}
     </ProLi>
+    <ProLi item="直播">
+      {profile.LiveRooms?.map((m) => <a href={m}>{getPlatform(m)}</a>)}
+    </ProLi>
+    {
+      bInfo && (
+        <ProLi item="Bilibili">
+          <span>提醒: 非最新数据</span>
+          <a href={`https://space.bilibili.com/${bInfo.mid}`}>{bInfo.uname}的空间</a>
+          <ProLi item="个性签名">{bInfo.sign}</ProLi>
+          <ProLi item="粉丝数">{bInfo.follower}</ProLi>
+          <ProLi item="视频数">{bInfo.video}</ProLi>
+          <ProLi item="直播间号">
+            <a href="https://live.bilibili.com/{bInfo.roomid}" /> {bInfo.roomid}
+          </ProLi>
+          <ProLi item="舰长数">{bInfo.guardNum}</ProLi>
+          <ProLi item="直播公告">{bInfo.notice}</ProLi>
+          <ProLi item="累计直播时长">{bInfo.averageLive}</ProLi>
+          <ProLi item="最后一次直播时间">{bInfo.lastLive.time}</ProLi>
+          <ProLi item="最后一次直播在线人数">{bInfo.lastLive.online}</ProLi>
+        </ProLi>
+      )
+    }
     <ProLi item="外链">
-      {props.ExternalLinks?.map((e) => <a href={e.URL}>{e.Remark}</a>)}
+      {profile.ExternalLinks?.map((e) => <a href={e.URL}>{e.Remark}</a>)}
     </ProLi>
     <ProLi item="高光时刻">
-      {props.Highlights?.map((h) => <a href={h.URL}>{h.Remark}</a>)}
+      {profile.Highlights?.map((h) => <a href={h.URL}>{h.Remark}</a>)}
     </ProLi>
-    {props.More?.map((m) => <ProLi item={m.item}>{m.value}</ProLi>)}
+    {profile.More?.map((m) => <ProLi item={m.item}>{m.value}</ProLi>)}
   </div>
 </div>
 

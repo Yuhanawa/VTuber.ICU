@@ -2,17 +2,25 @@
 import type { CollectionEntry } from "astro:content";
 import VTuberProfile from "../components/VTuberProfile.astro";
 import PostLayout from "./PostLayout.astro";
+import { getInfoByMid } from "../lib/InfoUtils";
 
 type Props = CollectionEntry<"v">["data"];
 
-const { title, description, pubDate, updatedDate, heroImage, profile } = Astro.props;
+const { mid, title, description, pubDate, updatedDate, heroImage, profile } = Astro.props;
+
+const bInfo = mid ? getInfoByMid(mid) : undefined;
 ---
 
-<PostLayout {...Astro.props}>
+<PostLayout
+  {...Astro.props}
+  title={title ?? bInfo?.uname}
+  description={description ?? bInfo?.sign}
+  heroImage={heroImage ?? bInfo?.face}
+>
   {
     profile && (
       <>
-        <VTuberProfile {...profile} />
+        <VTuberProfile bInfo={bInfo} profile={profile} />
         <hr />
       </>
     )

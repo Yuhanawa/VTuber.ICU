@@ -97,7 +97,7 @@ const posts = (await getCollection("v")).sort(
             posts.map((post: any) => (
               <li>
                 <a href={`/v/${post.slug}/`}>
-                  <Image width={720} height={360} src={post.data.heroImage} alt="" />
+                  {/* {(post.data.heroImage||post.data.bInfo) && <Image width={720} height={360} src={post.data.heroImage??post.data.bInfo?.face } alt="" />} */}
                   <h4 class="title">{post.data.title}</h4>
                   <p class="date">
                     <FormattedDate date={post.data.pubDate} />
