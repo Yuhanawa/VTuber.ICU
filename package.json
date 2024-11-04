@@ -7,7 +7,7 @@
     "check": "astro check",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "scripts:GenerateVs": "tsx scripts/GenerateVs.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -27,6 +27,7 @@
     "lefthook": "^1.8.2",
     "prettier": "^3.3.3",
     "prettier-plugin-astro": "^0.14.1",
-    "prettier-plugin-svelte": "^3.2.7"
+    "prettier-plugin-svelte": "^3.2.7",
+    "tsx": "^4.19.2"
   }
 }
