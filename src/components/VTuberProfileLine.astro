@@ -3,12 +3,14 @@ interface Props {
   item: string;
 }
 const { item } = Astro.props;
+const content = await Astro.slots.render("default");
 ---
 
 {
-  Astro.slots.has("default") !== undefined && (
+  content.trim() && (
     <li>
-      <span>{item}</span> <slot />
+      <span>{item}</span>
+      <Fragment set:html={content} />
     </li>
   )
 }
