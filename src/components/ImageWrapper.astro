@@ -1,0 +1,15 @@
+---
+import Image from "astro/components/Image.astro";
+
+const { src, alt, width, height } = Astro.props;
+
+const isLocal = src && !src.toString().startsWith("http"); // 判断是否为本地文件
+---
+
+{
+  isLocal ? (
+    <Image src={src} alt={alt} width={width} height={height} />
+  ) : (
+    <img src={src} alt={alt} />
+  )
+}

@@ -3,8 +3,8 @@ import { SITE_TITLE } from "../consts";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import FormattedDate from "../components/FormattedDate.astro";
-import { Image } from "astro:assets";
 import { getInfoByMid } from "../lib/InfoUtils";
+import ImageWarpper from "../components/ImageWrapper.astro";
 
 const posts = (await getCollection("v"))
   .filter((post: any) => post.data.featured)
@@ -27,7 +27,7 @@ const posts = (await getCollection("v"))
               <a href={`/v/${post.slug}/`}>
                 {post.data.heroImage ||
                   (post.data.mid && (
-                    <Image
+                    <ImageWarpper
                       width={720}
                       height={360}
                       src={post.data.heroImage ?? getInfoByMid(post.data.mid).face}
