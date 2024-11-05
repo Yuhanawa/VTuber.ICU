@@ -7,7 +7,8 @@
     "check": "astro check",
     "build": "astro build",
     "preview": "astro preview",
-    "scripts:GenerateVs": "tsx scripts/GenerateVs.ts"
+    "scripts:GenerateVs": "tsx scripts/GenerateVs.ts",
+    "scripts:DelVsLowThan10K": "tsx scripts/DelVsLowThan10K.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

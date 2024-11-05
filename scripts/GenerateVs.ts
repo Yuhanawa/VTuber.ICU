@@ -1,4 +1,4 @@
-import { getUnamesAndMids } from "../src/lib/InfoUtils";
+import { getInfoByMid, getUnamesAndMids } from "../src/lib/InfoUtils";
 import fs from "fs";
 
 const namesAndMids = getUnamesAndMids();
@@ -10,6 +10,7 @@ const vs = fs
 
 namesAndMids
   .filter(({ uname }) => !vs.includes(uname))
+  .filter(({ mid }) => getInfoByMid(mid).follower > 10000)
   .forEach(({ uname, mid }) => {
     const content = `---
 mid: ${mid}
