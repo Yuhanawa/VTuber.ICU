@@ -1,15 +1,13 @@
 ---
-import BaseHead from "../components/BaseHead.astro";
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+import { SITE_TITLE } from "../consts";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import FormattedDate from "../components/FormattedDate.astro";
 import { Image } from "astro:assets";
+import { getInfoByMid } from "../lib/InfoUtils";
 
 const posts = (await getCollection("v"))
-  .filter((post) => post.data.featured)
+  .filter((post: any) => post.data.featured)
   .sort((a: any, b: any) =>
     a.data.featured === b.data.featured
       ? b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
@@ -18,25 +16,35 @@ const posts = (await getCollection("v"))
 ---
 
 <BaseLayout title="Home" description="Lorem ipsum dolor sit amet" pubDate={new Date("2024-10-31")}>
-  <h1>Welcome to {SITE_TITLE}</h1>
-  <h2>👋 精选</h2>
-  <section>
-    <ul>
-      {
-        posts.map((post: any) => (
-          <li>
-            <a href={`/v/${post.slug}/`}>
-              <Image width={720} height={360} src={post.data.heroImage} alt="" />
-              <h4 class="title">{post.data.title}</h4>
-              <p class="date">
-                <FormattedDate date={post.data.pubDate} />
-              </p>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </section>
+  <div class="prose">
+    <h1>Welcome to {SITE_TITLE}</h1>
+    <h2>👋 精选</h2>
+    <section>
+      <ul>
+        {
+          posts.map((post: any) => (
+            <li>
+              <a href={`/v/${post.slug}/`}>
+                {post.data.heroImage ||
+                  (post.data.mid && (
+                    <Image
+                      width={720}
+                      height={360}
+                      src={post.data.heroImage ?? getInfoByMid(post.data.mid).face}
+                      alt=""
+                    />
+                  ))}
+                <h4 class="title">{post.data.title}</h4>
+                <p class="date">
+                  <FormattedDate date={post.data.pubDate} />
+                </p>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
 </BaseLayout>
 <style>
   main {
@@ -63,7 +71,8 @@ const posts = (await getCollection("v"))
     text-align: center;
   }
   ul li:first-child img {
-    width: 100%;
+    /* width: 100%; */
+    width: auto;
     max-height: 360px;
   }
   ul li:first-child .title {

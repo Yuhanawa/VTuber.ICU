@@ -1,7 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import ProLi from "./VTuberProfileLine.astro";
-import { getInfoByMid } from "../lib/InfoUtils";
 
 function getPlatform(url: string) {
   if (url.includes("youtube.com")) {
@@ -67,7 +66,7 @@ if (bInfo?.roomid) {
       }
     </ProLi>
     <ProLi item="媒体">
-      {profile.Medias.map((m) => <a href={m}>{getPlatform(m)}</a>)}
+      {profile.Medias?.map((m) => <a href={m}>{getPlatform(m)}</a>)}
     </ProLi>
     <ProLi item="直播">
       {profile.LiveRooms?.map((m) => <a href={m}>{getPlatform(m)}</a>)}
@@ -76,8 +75,8 @@ if (bInfo?.roomid) {
       bInfo && (
         <ProLi item="Bilibili">
           <div class="bilibili-info">
-            <span>提醒: 非最新数据</span>
-            <a href={`https://space.bilibili.com/${bInfo.mid}`}>{bInfo.uname}的空间</a>
+            <a href={`https://space.bilibili.com/${bInfo.mid}`}>{bInfo.uname}的空间 </a>
+            <span> 提示: 非最新数据</span>
             <ul class="bilibili-info-list">
               <ProLi item="个性签名">{bInfo.sign}</ProLi>
               <ProLi item="粉丝数">{bInfo.follower}</ProLi>

@@ -1,4 +1,4 @@
-import { getUnames, getUnamesAndMids } from "../src/lib/InfoUtils";
+import { getUnamesAndMids } from "../src/lib/InfoUtils";
 import fs from "fs";
 
 const namesAndMids = getUnamesAndMids();
@@ -9,7 +9,7 @@ const vs = fs
   .map((dirent) => dirent.name);
 
 namesAndMids
-  .filter(({ uname, mid }) => !vs.includes(uname))
+  .filter(({ uname }) => !vs.includes(uname))
   .forEach(({ uname, mid }) => {
     const content = `---
 mid: ${mid}

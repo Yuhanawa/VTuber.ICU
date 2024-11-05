@@ -156,3 +156,12 @@ hr {
 li::marker {
   content: none;
 }
+
+.prose {
+  /* width: 720px; */
+  width: 1020px;
+  max-width: calc(100% - 2em);
+  margin: auto;
+  padding: 1em;
+  color: rgb(var(--gray-dark));
+}
