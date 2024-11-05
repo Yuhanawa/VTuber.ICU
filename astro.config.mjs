@@ -14,4 +14,13 @@ export default defineConfig({
   integrations: [mdx(), sitemap(), svelte()],
   output: "static",
   adapter: vercel(),
+  image: {
+    domains: ["i0.hdslb.com"], // 允许的远程图片域名
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.hdslb.com", // 允许所有hdslb.com的子域名
+      },
+    ],
+  },
 });
