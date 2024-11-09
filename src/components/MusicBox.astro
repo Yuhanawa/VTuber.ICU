@@ -1,0 +1,214 @@
+---
+interface Props {
+  box: {
+    title: string;
+    musics: {
+      title: string;
+      audioSrc: string;
+    }[];
+  }[];
+}
+const { box } = Astro.props;
+---
+
+<div class="music-container">
+  {
+    box.map(({ title, musics }) => (
+      <div class="category-container">
+        <h3 class="category-title">{title}</h3>
+        <div class="music-grid">
+          {musics.map((music, index) => (
+            <div class="music-badge">
+              <button
+                class="play-button"
+                data-audio-src={music.audioSrc}
+                onclick="handlePlay(this)"
+                data-title={title}
+                data-index={index}
+              >
+                <span class="play-icon">▶</span>
+                <span class="pause-icon hidden">⏸</span>
+                <span class="music-title">{music.title}</span>
+              </button>
+              <audio id={`audio-${title}-${index}`} src={music.audioSrc} preload="auto" />
+            </div>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .music-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .category-container {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .category-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  .music-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .music-badge {
+    background-color: #f3f4f6;
+    border-radius: 9999px;
+    padding: 0.25rem;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+  }
+
+  .music-badge:hover {
+    background-color: #e5e7eb;
+    transform: translateY(-1px);
+  }
+
+  .play-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    background: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: #374151;
+    width: 100%;
+    transition: all 0.2s ease;
+  }
+
+  .play-button:focus {
+    outline: none;
+  }
+
+  .play-icon,
+  .pause-icon {
+    font-size: 0.75rem;
+    min-width: 12px;
+    color: #4b5563;
+  }
+
+  .music-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    text-align: left;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .playing {
+    background-color: #dbeafe;
+    border-color: #93c5fd;
+  }
+
+  .playing .play-button {
+    color: #1d4ed8;
+  }
+
+  .playing .play-icon,
+  .playing .pause-icon {
+    color: #2563eb;
+  }
+
+  @media (max-width: 640px) {
+    .music-container {
+      padding: 1rem;
+      gap: 1.5rem;
+    }
+
+    .category-container {
+      padding: 1rem;
+    }
+
+    .music-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 0.5rem;
+    }
+  }
+</style>
+
+<script>
+  let currentAudio: HTMLAudioElement | null = null;
+  let currentButton: HTMLButtonElement | null = null;
+  function handlePlay(audio: HTMLAudioElement, button: HTMLButtonElement) {
+    // 如果点击的是当前正在播放的音频
+    if (currentAudio === audio) {
+      if (audio.paused) {
+        audio.play();
+        updateButtonState(button, true);
+      } else {
+        audio.pause();
+        updateButtonState(button, false);
+      }
+      return;
+    }
+    // 如果有其他音频在播放，先停止它
+    if (currentAudio && currentButton) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      updateButtonState(currentButton, false);
+    }
+    // 播放新的音频
+    currentAudio = audio;
+    currentButton = button;
+    audio.play();
+    updateButtonState(button, true);
+  }
+  function updateButtonState(button: HTMLButtonElement, isPlaying: boolean) {
+    const playIcon = button.querySelector(".play-icon");
+    const pauseIcon = button.querySelector(".pause-icon");
+    const badge = button.closest(".music-badge");
+    if (isPlaying) {
+      playIcon?.classList.add("hidden");
+      pauseIcon?.classList.remove("hidden");
+      badge?.classList.add("playing");
+    } else {
+      playIcon?.classList.remove("hidden");
+      pauseIcon?.classList.add("hidden");
+      badge?.classList.remove("playing");
+    }
+  }
+  // 设置音频结束时的处理
+  function handleAudioEnd(audio: HTMLAudioElement, button: HTMLButtonElement) {
+    audio.currentTime = 0;
+    updateButtonState(button, false);
+  }
+  // 初始化事件监听
+  document.querySelectorAll(".play-button").forEach((button) => {
+    if (!(button instanceof HTMLButtonElement)) return;
+    const index = button.dataset.index;
+    const title = button.dataset.title;
+    if (!index) return;
+    const audio = document.getElementById(`audio-${title}-${index}`) as HTMLAudioElement;
+    if (!audio) return;
+    button.addEventListener("click", () => handlePlay(audio, button));
+    audio.addEventListener("ended", () => handleAudioEnd(audio, button));
+  });
+</script>
