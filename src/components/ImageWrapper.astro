@@ -10,6 +10,13 @@ const isLocal = src && !src.toString().startsWith("http"); // 判断是否为本
   isLocal ? (
     <Image src={src} alt={alt} width={width} height={height} />
   ) : (
-    <img src={src} alt={alt} />
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
   )
 }

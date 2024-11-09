@@ -87,8 +87,10 @@ if (bInfo?.roomid) {
               <ProLi item="舰长数">{bInfo.guardNum}</ProLi>
               <ProLi item="直播公告">{bInfo.notice}</ProLi>
               <ProLi item="累计直播时长">{bInfo.averageLive}</ProLi>
-              <ProLi item="最后一次直播时间">{bInfo.lastLive.time}</ProLi>
-              <ProLi item="最后一次直播在线人数">{bInfo.lastLive.online}</ProLi>
+              <ProLi item="最后直播时间">{new Date(bInfo.lastLive.time).toLocaleString()}</ProLi>
+              <ProLi item="最后直播在线人数">
+                {bInfo.lastLive.online > 1 ? bInfo.lastLive.online : undefined}
+              </ProLi>
             </ul>
           </div>
         </ProLi>
