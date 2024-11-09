@@ -1,0 +1,67 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import MusicBox from "../../components/MusicBox.astro";
+---
+
+<BaseLayout
+  title="永雏塔菲 音乐盒&八音盒 VTuber.ICU"
+  description="永雏塔菲 音乐盒&八音盒 美少女尖叫合集 VTuber.ICU"
+  pubDate={new Date("2024-11-09")}
+>
+  <div class="prose">
+    <h1>永雏塔菲 音乐盒&八音盒</h1>
+    <h2>素材收集自网络</h2>
+    <small>
+      <a
+        href="https://github.com/Yuhanawa/VTuber.ICU-Content/issues/new/"
+        rel="noopener noreferrer noindex"
+        target="_blank">如果无意冒犯或侵权请点此联系</a
+      >
+    </small>
+    <MusicBox
+      box={[
+        {
+          title: "啊尖叫",
+          musics: [
+            { title: "啊", audioSrc: "/musicbox/永雏塔菲/a.mp3" },
+            { title: "啊↗️啊↗️", audioSrc: "/musicbox/永雏塔菲/a8a8.mp3" },
+            { title: "啊高音1", audioSrc: "/musicbox/永雏塔菲/a-high-1.mp3" },
+            { title: "啊高音2", audioSrc: "/musicbox/永雏塔菲/a-high-2.mp3" },
+            { title: "啊啊啊", audioSrc: "/musicbox/永雏塔菲/aaa.mp3" },
+            { title: "啊长音", audioSrc: "/musicbox/永雏塔菲/a-long.mp3" },
+          ],
+        },
+        {
+          title: "奇怪的声音-1",
+          musics: [
+            { title: "额额", audioSrc: "/musicbox/永雏塔菲/ee.mp3" },
+            { title: "Nia", audioSrc: "/musicbox/永雏塔菲/nia.mp3" },
+            { title: "嘿嘿嘿", audioSrc: "/musicbox/永雏塔菲/hehehe.mp3" },
+          ],
+        },
+        {
+          title: "奇怪的声音-2",
+          musics: [
+            { title: "嗯", audioSrc: "/musicbox/永雏塔菲/en.mp3" },
+            { title: "啊嗯啊", audioSrc: "/musicbox/永雏塔菲/a-en-a.mp3" },
+            { title: "嗯不要", audioSrc: "/musicbox/永雏塔菲/en-no.mp3" },
+          ],
+        },
+        {
+          title: "奇怪的声音-3",
+          musics: [
+            { title: "鸭子叫", audioSrc: "/musicbox/永雏塔菲/duck.mp3" },
+            { title: "邪恶的笑", audioSrc: "/musicbox/永雏塔菲/bad.mp3" },
+          ],
+        },
+      ]}
+    />
+  </div>
+</BaseLayout>
+<style>
+  small a {
+    color: gray;
+    font-size: 14px;
+    padding: 0 2em;
+  }
+</style>
