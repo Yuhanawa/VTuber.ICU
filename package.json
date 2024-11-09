@@ -7,6 +7,7 @@
     "check": "astro check",
     "build": "astro build",
     "preview": "astro preview",
+    "format": "prettier --write src --ignore-unknown",
     "scripts:GenerateVs": "tsx scripts/GenerateVs.ts",
     "scripts:DelVsLowThan10K": "tsx scripts/DelVsLowThan10K.ts"
   },
